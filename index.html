@@ -1,1 +1,20 @@
-window.location.href = "dinner-form.html";
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지 이동 예시</title>
+</head>
+<body>
+
+    <button id="moveButton">석식 신청 페이지로 이동</button>
+
+    <script>
+        // 버튼 클릭 시 dinner-form.html로 이동
+        document.getElementById('moveButton').addEventListener('click', function() {
+            window.location.href = "dinner-form.html";  // 이 페이지로 이동
+        });
+    </script>
+    
+</body>
+</html>
