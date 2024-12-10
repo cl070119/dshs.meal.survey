@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>페이지 이동 예시</title>
+    <title>조건에 따라 페이지 이동</title>
 </head>
 <body>
 
-    <button id="moveButton">석식 신청 페이지로 이동</button>
+    <p>조건을 만족하면 자동으로 페이지가 이동합니다.</p>
 
     <script>
-        // 버튼 클릭 시 dinner-form.html로 이동
-        document.getElementById('moveButton').addEventListener('click', function() {
-            window.location.href = "dinner-form.html";  // 이 페이지로 이동
-        });
+        // 특정 조건이 만족되면 자동으로 페이지 이동
+        let conditionMet = true;  // 이 값에 따라 조건을 바꿔보세요.
+
+        if (conditionMet) {
+            window.location.href = "dinner-form.html";  // 조건이 맞으면 이동
+        }
     </script>
     
 </body>
