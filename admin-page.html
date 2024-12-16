@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대전 대성고 관리자 페이지</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fef6e4;
+        }
+        h1 {
+            color: #4CAF50;
+            margin: 0;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        select, table {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        input[type="date"] {
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>대전 대성고 관리자 페이지</h1>
+        
+        <h3>날짜를 선택하여 석식 통계를 확인하세요</h3>
+
+        <input type="date" id="calendar" onchange="loadSurveyData()">
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>날짜</th>
+                    <th>참여 인원</th>
+                    <th>석식 먹음</th>
+                    <th>석식 먹지 않음</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 통계가 이곳에 표시됩니다. -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Firebase SDK 추가 (모듈로 로드) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyD79wp8ipSqCEkqG6-Nt1JTPMFKavgh6Ps",
+            authDomain: "dinnersurveyproject.firebaseapp.com",
+            projectId: "dinnersurveyproject",
+            storageBucket: "dinnersurveyproject.firebasestorage.app",
+            messagingSenderId: "691081991416",
+            appId: "1:691081991416:web:d24875e91ae85f8980170d"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // 날짜별 통계 불러오기
+        window.loadSurveyData = function() {
+            const selectedDate = document.getElementById('calendar').value;
+            if (!selectedDate) {
+                alert('날짜를 선택해주세요.');
+                return;
+            }
+
+            // Firebase에서 선택한 날짜의 설문 데이터를 불러오기
+            const dbRef = ref(database, "dinner-survey/" + selectedDate);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const surveyData = snapshot.val();
+                    const tableBody = document.querySelector("table tbody");
+                    tableBody.innerHTML = ''; // 테이블 초기화
+
+                    // surveyData는 객체이므로 배열로 변환
+                    const surveyArray = Object.values(surveyData); // 객체를 배열로 변환
+
+                    const totalParticipants = surveyArray.length;
+                    const dinnerYes = surveyArray.filter(item => item.dinnerChoice === '먹음').length;
+                    const dinnerNo = surveyArray.filter(item => item.dinnerChoice === '먹지 않음').length;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = ` 
+                        <td>${selectedDate}</td>
+                        <td>${totalParticipants}</td>
+                        <td>${dinnerYes}</td>
+                        <td>${dinnerNo}</td>
+                    `;
+                    tableBody.appendChild(row);
+                } else {
+                    console.log("No data available");
+                }
+            }).catch((error) => {
+                console.error("Error getting data: ", error);
+            });
+        }
+    </script>
+</body>
+</html>
